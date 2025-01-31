@@ -1,9 +1,9 @@
 import pandas as pd
 import streamlit as st
 
-# Leer el archivo Excel
-file_path = "C:\\Users\\AndrésFelipeGiraldoV\\OneDrive - Perceptio S.A.S\\Clientes\\Doc's_BANCO\\Python\\App respuestas examen banco\\Data\\preguntas.xlsx"
-df = pd.read_excel(file_path)
+# Leer el archivo Excel desde GitHub
+file_url = "https://github.com/afgv9345/Ayuda-preguntas-examen-banco/blob/main/preguntas.xlsx"  # Reemplaza con tu URL cruda
+df = pd.read_excel(file_url)
 
 # Título de la aplicación
 st.title("Buscador de Preguntas")
