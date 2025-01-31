@@ -4,7 +4,7 @@ import requests  # Para descargar el archivo desde la URL
 from io import BytesIO  # Para manejar el archivo en memoria
 
 # URL del archivo Excel en GitHub (asegúrate de usar la versión RAW)
-file_url = "https://raw.githubusercontent.com/usuario/repositorio/rama/preguntas.xlsx"  # Reemplaza con tu URL cruda
+file_url = "https://raw.githubusercontent.com/afgv9345/Ayuda-preguntas-examen-banco/main/preguntas.xlsx"  # Reemplaza con tu URL cruda
 
 # Descargar el archivo Excel desde la URL
 try:
