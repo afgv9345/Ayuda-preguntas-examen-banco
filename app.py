@@ -80,7 +80,7 @@ if st.session_state.authenticated:
     # Botón para limpiar la pregunta
     if st.button("Limpiar pregunta"):
         st.session_state.query = ""  # Limpiar el estado de la consulta
-        st.experimental_rerun()  # Volver a ejecutar la aplicación para actualizar el campo de entrada
+        st.rerun()  # Reemplaza experimental_rerun() por rerun()
 
     # Botón para cerrar sesión
     if st.button("Cerrar sesión"):
