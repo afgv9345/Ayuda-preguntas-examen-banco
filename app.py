@@ -17,6 +17,10 @@ def check_password(plain_password, hashed_password):
 # Cargar las credenciales desde el archivo YAML
 credentials = load_credentials('credentials.yml')  # Asegúrate de que este archivo esté en el mismo directorio
 
+# Inicializar el estado de sesión si no existe
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+
 # Autenticación del usuario
 st.title("Autenticación")
 username = st.text_input("Usuario")
@@ -27,16 +31,16 @@ if st.button("Iniciar sesión"):
         hashed_password = credentials['credentials']['usernames'][username]['password']
         if check_password(password, hashed_password):
             st.success(f'Bienvenido, {username}!')
-            authenticated = True
+            st.session_state.authenticated = True  # Establecer autenticación como verdadera
         else:
             st.error("Contraseña incorrecta.")
-            authenticated = False
+            st.session_state.authenticated = False
     else:
         st.error("Usuario no encontrado.")
-        authenticated = False
+        st.session_state.authenticated = False
 
 # Si el usuario está autenticado, continuar con la aplicación
-if 'authenticated' in locals() and authenticated:
+if st.session_state.authenticated:
     # URL del archivo Excel en GitHub (asegúrate de usar la versión RAW)
     file_url = "https://raw.githubusercontent.com/afgv9345/Ayuda-preguntas-examen-banco/main/preguntas.xlsx"
 
@@ -61,9 +65,9 @@ if 'authenticated' in locals() and authenticated:
             results = df[df['Pregunta'].str.contains(query, case=False, na=False)]
             
             if not results.empty:
-                response = results.iloc[0]
-                st.success(f"Tema: {response['Tema']}")
-                st.success(f"Respuesta: {response['Respuesta']}")
+                for index, response in results.iterrows():
+                    st.success(f"Tema: {response['Tema']}")
+                    st.success(f"Respuesta: {response['Respuesta']}")
             else:
                 st.warning("No se encontraron resultados para la pregunta ingresada.")
         else:
