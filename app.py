@@ -21,6 +21,10 @@ credentials = load_credentials('credentials.yml')  # Asegúrate de que este arch
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
+# Inicializar el estado de la consulta si no existe
+if 'query' not in st.session_state:
+    st.session_state.query = ""
+
 # Autenticación del usuario
 st.title("Autenticación")
 username = st.text_input("Usuario")
@@ -58,7 +62,7 @@ if st.session_state.authenticated:
     st.title("Buscador de Preguntas")
 
     # Campo de entrada para la pregunta
-    query = st.text_input("Ingrese parte de la pregunta:")
+    query = st.text_input("Ingrese parte de la pregunta:", value=st.session_state.query)
 
     if st.button("Buscar"):
         if query:
@@ -72,6 +76,11 @@ if st.session_state.authenticated:
                 st.warning("No se encontraron resultados para la pregunta ingresada.")
         else:
             st.error("Por favor ingrese una pregunta.")
+
+    # Botón para limpiar la pregunta
+    if st.button("Limpiar pregunta"):
+        st.session_state.query = ""  # Limpiar el estado de la consulta
+        st.experimental_rerun()  # Volver a ejecutar la aplicación para actualizar el campo de entrada
 
     # Botón para cerrar sesión
     if st.button("Cerrar sesión"):
