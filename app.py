@@ -72,3 +72,8 @@ if st.session_state.authenticated:
                 st.warning("No se encontraron resultados para la pregunta ingresada.")
         else:
             st.error("Por favor ingrese una pregunta.")
+
+    # Botón para cerrar sesión
+    if st.button("Cerrar sesión"):
+        st.session_state.authenticated = False  # Restablecer el estado de autenticación
+        st.success("Has cerrado sesión exitosamente.")
