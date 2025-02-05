@@ -66,7 +66,7 @@ if st.session_state.authenticated:
 
     if st.button("Buscar"):
         if query:
-            results = df[df['Pregunta'].str.contains(query, case=False, na=False)]
+            results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]  # Cambiado a regex=False
             
             if not results.empty:
                 for index, response in results.iterrows():
@@ -80,7 +80,10 @@ if st.session_state.authenticated:
     # Botón para limpiar la pregunta
     if st.button("Limpiar pregunta"):
         st.session_state.query = ""  # Limpiar el estado de la consulta
-        st.rerun()  # Reemplaza experimental_rerun() por rerun()
+        query = ""  # Limpiar también la variable local query para actualizar el campo de entrada
+
+    # Actualiza el campo de entrada con el valor actual del estado
+    query = st.text_input("Ingrese parte de la pregunta:", value=st.session_state.query)
 
     # Botón para cerrar sesión
     if st.button("Cerrar sesión"):
