@@ -113,18 +113,21 @@ if st.session_state.authenticated:
                     respuesta = response['Respuesta']
                     color = tema_colores.get(tema, "black")
 
-                    # Crear el HTML para el texto coloreado
-                    tema_html = f"<p style='color:{color}; font-weight: bold;'>Tema: {tema}</p>"
-                    respuesta_html = f"<p style='color:{color};'>Respuesta: {respuesta}</p>"
+                    # Crear el HTML para el texto coloreado y encerrado en un rectángulo
+                    tema_html = f"""
+                        <div style="border: 2px solid {color}; padding: 10px; margin-bottom: 5px; border-radius: 5px;">
+                            <p style="color:{color}; font-weight: bold;">Tema: {tema}</p>
+                            <p style="color:{color};">Respuesta: {respuesta}</p>
+                        </div>
+                    """
 
                     # Añadir los resultados al estado de la sesión
-                    st.session_state.results.append({"Tema": tema_html, "Respuesta": respuesta_html})
+                    st.session_state.results.append(tema_html)
 
                 # Mostrar los resultados usando st.markdown con unsafe_allow_html=True
                 if 'results' in st.session_state and st.session_state.results:  # Verificar que la lista no esté vacía
-                    for result in st.session_state.results:
-                        st.markdown(result['Tema'], unsafe_allow_html=True)
-                        st.markdown(result['Respuesta'], unsafe_allow_html=True)
+                    for result_html in st.session_state.results:
+                        st.markdown(result_html, unsafe_allow_html=True)
 
             else:
                 st.warning("No se encontraron resultados para la pregunta ingresada.", icon="⚠️")
