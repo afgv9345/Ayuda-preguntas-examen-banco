@@ -55,7 +55,7 @@ if st.session_state.authenticated:
         st.stop()  # Detener la ejecución si ocurre un error
 
     # Título de la aplicación
-    st.title("Buscador de preguntas para prueba Banco")
+    st.title("Buscador de Preguntas")
 
     # Campo de entrada para la pregunta
     query = st.text_input("Ingrese parte de la pregunta:", key="question_input")
@@ -63,15 +63,26 @@ if st.session_state.authenticated:
     if st.button("Buscar", key="search_button"):
         if query:
             results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]  # Cambiado a regex=False
-            
+
             if not results.empty:
+                st.session_state.results = []  # Store results in session state
                 for index, response in results.iterrows():
-                    st.success(f"Tema: {response['Tema']}", icon="📚")
-                    st.success(f"Respuesta: {response['Respuesta']}", icon="✅")
+                    st.session_state.results.append({"Tema": response['Tema'], "Respuesta": response['Respuesta']})  # Append results
+
+                # Display Results
+                for result in st.session_state.results:
+                    st.success(f"Tema: {result['Tema']}", icon="📚")
+                    st.success(f"Respuesta: {result['Respuesta']}", icon="✅")
             else:
                 st.warning("No se encontraron resultados para la pregunta ingresada.", icon="⚠️")
         else:
             st.error("Por favor ingrese una pregunta.", icon="🚨")
+
+    # Botón para limpiar la pregunta y los resultados
+    if st.button("Limpiar", key="clear_button"):
+        st.session_state.query = ""  # Limpiar la entrada de la pregunta
+        if 'results' in st.session_state:
+            del st.session_state.results  # Clear the results
 
     # Botón para cerrar sesión
     if st.button("Cerrar sesión", key="logout_button"):
