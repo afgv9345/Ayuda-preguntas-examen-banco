@@ -21,6 +21,31 @@ credentials = load_credentials('credentials.yml')  # Asegúrate de que este arch
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
+# Estilo CSS personalizado para los botones
+st.markdown(
+    """
+    <style>
+    div.stButton > button:first-child {
+        background-color: #007ACC;
+        color: white;
+        font-size: 16px;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px; /* Espacio entre el icono y el texto */
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #005EA2; /* Un tono más oscuro al pasar el mouse */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Autenticación del usuario
 st.title("Autenticación")
 username = st.text_input("Usuario", key="username")
@@ -60,34 +85,51 @@ if st.session_state.authenticated:
     # Campo de entrada para la pregunta
     query = st.text_input("Ingrese parte de la pregunta:", key="question_input")
 
-    if st.button("Buscar", key="search_button"):
+    # Diccionario de colores para los temas
+    tema_colores = {
+        "Tema 1": "blue",
+        "Tema 2": "green",
+        "Tema 3": "orange",
+        # Agrega más temas y colores aquí
+    }
+
+    if st.button("Buscar \U0001F50D", key="search_button"):  # Icono de lupa
         if query:
-            results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]  # Cambiado a regex=False
+            results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]
 
             if not results.empty:
                 st.session_state.results = []  # Store results in session state
                 for index, response in results.iterrows():
-                    st.session_state.results.append({"Tema": response['Tema'], "Respuesta": response['Respuesta']})  # Append results
+                    tema = response['Tema']
+                    respuesta = response['Respuesta']
 
-                # Display Results
+                    # Obtener el color del tema o usar un color predeterminado
+                    color = tema_colores.get(tema, "black")  # "black" como color por defecto
+
+                    # Crear el HTML para el texto coloreado
+                    tema_html = f"<p style='color:{color}; font-weight: bold;'>Tema: {tema}</p>"
+                    respuesta_html = f"<p style='color:{color};'>Respuesta: {respuesta}</p>"
+
+                    # Agrega los resultados al estado de la sesión para que persistan
+                    st.session_state.results.append({"Tema": tema_html, "Respuesta": respuesta_html})
+
+                # Mostrar los resultados
                 for result in st.session_state.results:
-                    st.success(f"Tema: {result['Tema']}", icon="📚")
-                    st.success(f"Respuesta: {result['Respuesta']}", icon="✅")
+                    st.markdown(result['Tema'], unsafe_allow_html=True)
+                    st.markdown(result['Respuesta'], unsafe_allow_html=True)
             else:
                 st.warning("No se encontraron resultados para la pregunta ingresada.", icon="⚠️")
         else:
             st.error("Por favor ingrese una pregunta.", icon="🚨")
 
     # Botón para nueva pregunta (limpia campo de búsqueda y resultados)
-    if st.button("Nueva Pregunta", key="new_question_button"):
+    if st.button("Nueva Pregunta \U0001F5D1", key="new_question_button"):  # Icono de borrador
         st.session_state.query = ""  # Limpiar la entrada de la pregunta
 
         if 'results' in st.session_state:
             del st.session_state.results  # Limpiar los resultados
 
-        # The query text input will automatically be cleared because its value is tied to st.session_state.query
-
     # Botón para cerrar sesión
-    if st.button("Cerrar sesión", key="logout_button"):
+    if st.button("Cerrar sesión \U0001F512", key="logout_button"):  # Icono de candado
         st.session_state.authenticated = False  # Restablecer el estado de autenticación
         st.success("Has cerrado sesión exitosamente.", icon="🚪")
