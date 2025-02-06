@@ -17,6 +17,12 @@ def check_password(plain_password, hashed_password):
 # Cargar las credenciales desde el archivo YAML
 credentials = load_credentials('credentials.yml')  # Asegúrate de que este archivo esté en el mismo directorio
 
+# Inicializar el estado de sesión (¡IMPORTANTE!)
+if 'authenticated' not in st.session_state:
+    st.session_state.authenticated = False
+if 'results' not in st.session_state:
+    st.session_state.results = []
+
 # Estilo CSS personalizado para los botones
 st.markdown(
     """
