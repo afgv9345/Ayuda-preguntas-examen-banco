@@ -78,11 +78,15 @@ if st.session_state.authenticated:
         else:
             st.error("Por favor ingrese una pregunta.", icon="🚨")
 
-    # Botón para limpiar la pregunta y los resultados
-    if st.button("Limpiar", key="clear_button"):
+    # Botón para nueva pregunta (limpia campo de búsqueda y resultados)
+    if st.button("Nueva Pregunta", key="new_question_button"):
         st.session_state.query = ""  # Limpiar la entrada de la pregunta
         if 'results' in st.session_state:
-            del st.session_state.results  # Clear the results
+            del st.session_state.results  # Limpiar los resultados
+
+        # Clear the text input directly (more reliable)
+        st.empty()
+        st.text_input("Ingrese parte de la pregunta:", key="question_input")
 
     # Botón para cerrar sesión
     if st.button("Cerrar sesión", key="logout_button"):
