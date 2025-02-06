@@ -17,10 +17,6 @@ def check_password(plain_password, hashed_password):
 # Cargar las credenciales desde el archivo YAML
 credentials = load_credentials('credentials.yml')  # Asegúrate de que este archivo esté en el mismo directorio
 
-# Inicializar el estado de sesión si no existe
-if 'authenticated' not in st.session_state:
-    st.session_state.authenticated = False
-
 # Estilo CSS personalizado para los botones
 st.markdown(
     """
@@ -87,10 +83,16 @@ if st.session_state.authenticated:
 
     # Diccionario de colores para los temas
     tema_colores = {
-        "Tema 1": "blue",
-        "Tema 2": "green",
-        "Tema 3": "orange",
-        # Agrega más temas y colores aquí
+        "ABAP": "#1f77b4",  # Azul
+        "Docker y contenedores": "#ff7f0e",  # Naranja
+        "DevOps CI": "#2ca02c",  # Verde
+        "Principios SOLID": "#d62728",  # Rojo
+        "Programación reactiva": "#9467bd",  # Morado
+        "Conocimiento DDD": "#8c564b",  # Marrón
+        "Clean Architecture": "#e377c2",  # Rosa
+        "Seguridad en el desarrollo de SW": "#7f7f7f",  # Gris
+        "Comunicación": "#bcbd22",  # Amarillo
+        "AWS_Architecture": "#17becf",  # Celeste
     }
 
     if st.button("Buscar \U0001F50D", key="search_button"):  # Icono de lupa
@@ -98,25 +100,26 @@ if st.session_state.authenticated:
             results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]
 
             if not results.empty:
-                st.session_state.results = []  # Store results in session state
+                st.session_state.results = []  # Inicializar la lista de resultados
+
                 for index, response in results.iterrows():
                     tema = response['Tema']
                     respuesta = response['Respuesta']
-
-                    # Obtener el color del tema o usar un color predeterminado
-                    color = tema_colores.get(tema, "black")  # "black" como color por defecto
+                    color = tema_colores.get(tema, "black")
 
                     # Crear el HTML para el texto coloreado
                     tema_html = f"<p style='color:{color}; font-weight: bold;'>Tema: {tema}</p>"
                     respuesta_html = f"<p style='color:{color};'>Respuesta: {respuesta}</p>"
 
-                    # Agrega los resultados al estado de la sesión para que persistan
+                    # Añadir los resultados al estado de la sesión
                     st.session_state.results.append({"Tema": tema_html, "Respuesta": respuesta_html})
 
-                # Mostrar los resultados
-                for result in st.session_state.results:
-                    st.markdown(result['Tema'], unsafe_allow_html=True)
-                    st.markdown(result['Respuesta'], unsafe_allow_html=True)
+                # Mostrar los resultados usando st.markdown con unsafe_allow_html=True
+                if 'results' in st.session_state and st.session_state.results:  # Verificar que la lista no esté vacía
+                    for result in st.session_state.results:
+                        st.markdown(result['Tema'], unsafe_allow_html=True)
+                        st.markdown(result['Respuesta'], unsafe_allow_html=True)
+
             else:
                 st.warning("No se encontraron resultados para la pregunta ingresada.", icon="⚠️")
         else:
@@ -125,7 +128,6 @@ if st.session_state.authenticated:
     # Botón para nueva pregunta (limpia campo de búsqueda y resultados)
     if st.button("Nueva Pregunta \U0001F5D1", key="new_question_button"):  # Icono de borrador
         st.session_state.query = ""  # Limpiar la entrada de la pregunta
-
         if 'results' in st.session_state:
             del st.session_state.results  # Limpiar los resultados
 
