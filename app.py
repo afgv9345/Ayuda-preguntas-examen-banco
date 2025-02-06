@@ -21,16 +21,12 @@ credentials = load_credentials('credentials.yml')  # Asegúrate de que este arch
 if 'authenticated' not in st.session_state:
     st.session_state.authenticated = False
 
-# Inicializar el estado de la consulta si no existe
-if 'query' not in st.session_state:
-    st.session_state.query = ""
-
 # Autenticación del usuario
 st.title("Autenticación")
-username = st.text_input("Usuario")
-password = st.text_input("Contraseña", type="password")
+username = st.text_input("Usuario", key="username")
+password = st.text_input("Contraseña", type="password", key="password")
 
-if st.button("Iniciar sesión"):
+if st.button("Iniciar sesión", key="login_button"):
     if username in credentials['credentials']['usernames']:
         hashed_password = credentials['credentials']['usernames'][username]['password']
         if check_password(password, hashed_password):
@@ -59,33 +55,25 @@ if st.session_state.authenticated:
         st.stop()  # Detener la ejecución si ocurre un error
 
     # Título de la aplicación
-    st.title("Buscador de Preguntas")
+    st.title("Buscador de preguntas para prueba Banco")
 
     # Campo de entrada para la pregunta
-    query = st.text_input("Ingrese parte de la pregunta:", value=st.session_state.query)
+    query = st.text_input("Ingrese parte de la pregunta:", key="question_input")
 
-    if st.button("Buscar"):
+    if st.button("Buscar", key="search_button"):
         if query:
             results = df[df['Pregunta'].str.contains(query, case=False, na=False, regex=False)]  # Cambiado a regex=False
             
             if not results.empty:
                 for index, response in results.iterrows():
-                    st.success(f"Tema: {response['Tema']}")
-                    st.success(f"Respuesta: {response['Respuesta']}")
+                    st.success(f"Tema: {response['Tema']}", icon="📚")
+                    st.success(f"Respuesta: {response['Respuesta']}", icon="✅")
             else:
-                st.warning("No se encontraron resultados para la pregunta ingresada.")
+                st.warning("No se encontraron resultados para la pregunta ingresada.", icon="⚠️")
         else:
-            st.error("Por favor ingrese una pregunta.")
-
-    # Botón para limpiar la pregunta
-    if st.button("Limpiar pregunta"):
-        st.session_state.query = ""  # Limpiar el estado de la consulta
-        query = ""  # Limpiar también la variable local query para actualizar el campo de entrada
-
-    # Actualiza el campo de entrada con el valor actual del estado
-    query = st.text_input("Ingrese parte de la pregunta:", value=st.session_state.query)
+            st.error("Por favor ingrese una pregunta.", icon="🚨")
 
     # Botón para cerrar sesión
-    if st.button("Cerrar sesión"):
+    if st.button("Cerrar sesión", key="logout_button"):
         st.session_state.authenticated = False  # Restablecer el estado de autenticación
-        st.success("Has cerrado sesión exitosamente.")
+        st.success("Has cerrado sesión exitosamente.", icon="🚪")
